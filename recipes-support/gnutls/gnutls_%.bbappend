@@ -1,0 +1,1 @@
+EXTRA_OECONF = " HOGWEED_LIBS=-lhogweed"
