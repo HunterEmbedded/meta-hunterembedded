@@ -3,10 +3,7 @@ HOMEPAGE = "https://docs.pi-hole.net/"
 LICENSE = "EUPL-1.2"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=b88cc6a18c38fa0e92cb1bb7f97b4f8f"
 
-#DEPENDS = " \
-#    pi-hole-ftl \
-#    pi-hole-web \
-#"
+require ../pi-hole/pi-hole.inc
 
 RDEPENDS:${PN} = " \
     bash-completion \
@@ -38,7 +35,7 @@ SRC_URI = "  gitsm://github.com/pi-hole/pi-hole.git;protocol=https;branch=master
 SRC_URI:append = " file://basic-install.sh"
 
 
-SRCREV = "0f7803b7753b581ed747eb6398be0c78dbfdc845"
+SRCREV = "${CORE_SRCREV}"
 
 S = "${WORKDIR}/git"
 
@@ -56,6 +53,26 @@ do_install(){
     # create directories
     install -d ${D}/etc/pihole
     install -d ${D}/opt/pihole
+
+
+    # create revisions file
+    echo "\
+CORE_VERSION=${BB_CORE_VERSION} 
+CORE_BRANCH=${BB_CORE_BRANCH} 
+CORE_HASH=${BB_CORE_HASH}
+GITHUB_CORE_VERSION=${BB_CORE_VERSION}
+GITHUB_CORE_HASH=${BB_CORE_HASH}
+WEB_VERSION=${BB_WEB_VERSION} 
+WEB_BRANCH=${BB_WEB_BRANCH} 
+WEB_HASH=${BB_WEB_HASH}
+GITHUB_WEB_VERSION=${BB_WEB_VERSION}
+GITHUB_WEB_HASH=${BB_WEB_HASH}
+FTL_VERSION=${BB_FTL_VERSION} 
+FTL_SRCREV_BRANCH=${BB_FTL_BRANCH} 
+FTL_HASH=${BB_FTL_HASH}
+GITHUB_FTL_VERSION=${BB_FTL_VERSION}
+GITHUB_FTL_HASH=${BB_FTL_HASH}
+" > ${D}/etc/pihole/versions
 
 }
 
