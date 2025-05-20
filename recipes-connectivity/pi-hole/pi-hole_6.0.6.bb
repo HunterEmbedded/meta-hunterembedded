@@ -39,7 +39,11 @@ SRCREV = "${CORE_SRCREV}"
 
 S = "${WORKDIR}/git"
 
-
+PI_HOLE_INSTALL_DIR = "/opt/pihole"
+PI_HOLE_BIN_DIR = "/usr/local/bin"
+inherit useradd
+USERADD_PACKAGES = "${PN}"
+USERADD_PARAM:${PN} = "--system pihole"
 
 do_install(){
 
@@ -52,9 +56,24 @@ do_install(){
 
     # create directories
     install -d ${D}/etc/pihole
-    install -d ${D}/opt/pihole
+ 
+    # This is installScripts() from the basic_install.sh 
+    # Install the scripts by:
+    #  -o setting the owner to the user
+    #  -Dm755 create all leading components of destination except the last, then copy the source to the destination and setting the permissions to 755
+    #
+    # The first ones are the directories
+    install -o pihole -Dm755 -d ${D}${PI_HOLE_INSTALL_DIR}
+    install -o pihole -Dm755 -d ${D}${PI_HOLE_BIN_DIR}
+    # The rest are the scripts Pi-hole needs
+    install -o pihole -Dm755 ${S}/gravity.sh ${D}${PI_HOLE_INSTALL_DIR}/gravity.sh
+    install -o pihole -Dm755 ${S}/advanced/Scripts/*.sh ${D}${PI_HOLE_INSTALL_DIR}/ 
+    install -o pihole -Dm755 "${S}/automated install/uninstall.sh" ${D}${PI_HOLE_INSTALL_DIR}/
+    install -o pihole -Dm755 ${S}/advanced/Scripts/COL_TABLE ${D}${PI_HOLE_INSTALL_DIR}/
+    install -o pihole -Dm755 ${S}/pihole ${D}${PI_HOLE_BIN_DIR}/
+    install -Dm644 ${S}/advanced/bash-completion/pihole ${D}/etc/bash_completion.d/pihole
 
-
+ 
     # create revisions file
     echo "\
 CORE_VERSION=${BB_CORE_VERSION} 
@@ -79,5 +98,6 @@ GITHUB_FTL_HASH=${BB_FTL_HASH}
 
 FILES:${PN} += " \
     /etc/pihole \
-    /opt/pihole \
+    ${PI_HOLE_INSTALL_DIR} \
+    ${PI_HOLE_BIN_DIR} \
 "

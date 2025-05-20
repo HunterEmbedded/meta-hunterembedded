@@ -1678,10 +1678,10 @@ nomail
 # Install base files and web interface
 installPihole() {
     # Install base files and web interface
-    if ! installScripts; then
-        printf "  %b Failure in dependent script copy function.\\n" "${CROSS}"
-        exit 1
-    fi
+    #if ! installScripts; then
+    #    printf "  %b Failure in dependent script copy function.\\n" "${CROSS}"
+    #    exit 1
+    #fi
 
     # Move old dnsmasq files to $V6_CONF_MIGRATION_DIR for later migration via migrate_dnsmasq_configs()
     move_old_dnsmasq_ftl_configs
