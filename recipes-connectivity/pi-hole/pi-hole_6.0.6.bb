@@ -40,6 +40,7 @@ SRCREV = "${CORE_SRCREV}"
 S = "${WORKDIR}/git"
 
 PI_HOLE_INSTALL_DIR = "/opt/pihole"
+PI_HOLE_CONFIG_DIR = "${sysconfdir}/pihole"
 PI_HOLE_BIN_DIR = "/usr/local/bin"
 inherit useradd
 USERADD_PACKAGES = "${PN}"
@@ -48,14 +49,17 @@ USERADD_PARAM:${PN} = "--system pihole"
 do_install(){
 
     # copy over pihole repo
-    install -d ${D}/etc/.pihole
-    cp -r ${S}/. ${D}/etc/.pihole
+    install -d ${D}/home/admin
+    #cp -r ${S}/. ${D}/etc/.pihole
 
     # overwrite default script with customised no check and no download version
-    install -m 755 ${WORKDIR}/basic-install.sh "${D}/etc/.pihole/automated install/"
+    install -m 755 ${WORKDIR}/basic-install.sh ${D}/home/admin
 
     # create directories
-    install -d ${D}/etc/pihole
+    install -d ${D}${sysconfdir}/pihole
+    install -d ${D}${sysconfdir}/pihole/Templates
+    install -d ${D}${sysconfdir}/cron.d
+    install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants
  
     # This is installScripts() from the basic_install.sh 
     # Install the scripts by:
@@ -71,9 +75,32 @@ do_install(){
     install -o pihole -Dm755 "${S}/automated install/uninstall.sh" ${D}${PI_HOLE_INSTALL_DIR}/
     install -o pihole -Dm755 ${S}/advanced/Scripts/COL_TABLE ${D}${PI_HOLE_INSTALL_DIR}/
     install -o pihole -Dm755 ${S}/pihole ${D}${PI_HOLE_BIN_DIR}/
-    install -Dm644 ${S}/advanced/bash-completion/pihole ${D}/etc/bash_completion.d/pihole
+    install -Dm644 ${S}/advanced/bash-completion/pihole ${D}${sysconfdir}/bash_completion.d/pihole
 
- 
+    # This is installScripts() from basic_install.sh
+    install -o pihole -g pihole -Dm660 /dev/null ${D}/${PI_HOLE_CONFIG_DIR}/hosts/custom.list
+    # install pihole-FTL.service and then manually enable it with symlink as we cannot do it in the pihole-FTL recipe 
+    # as it does not have the pihole git repo with the service file
+    install -Dm644 ${S}/advanced/Templates/pihole-FTL.systemd ${D}${sysconfdir}/systemd/system/pihole-FTL.service
+    ln -s -r ${D}${sysconfdir}/systemd/system/pihole-FTL.service ${D}${sysconfdir}/systemd/system/multi-user.target.wants/pihole-FTL.service 
+    install -Dm755 ${S}/advanced/Templates/pihole-FTL-prestart.sh ${D}${PI_HOLE_INSTALL_DIR}/pihole-FTL-prestart.sh
+    install -Dm755 ${S}/advanced/Templates/pihole-FTL-poststop.sh ${D}${PI_HOLE_INSTALL_DIR}/pihole-FTL-poststop.sh
+
+    # Install control files for cron
+    install -o root -g root -Dm644  ${S}/advanced/Templates/pihole.cron ${D}${sysconfdir}/cron.d/pihole
+    # and logRotate
+    install -o root -g root -Dm644  ${S}/advanced/Templates/logrotate ${D}${sysconfdir}/pihole/logrotate
+
+
+    # Copy gravity db files to /etc/pihole and then update script to point to that directory
+    cp -r ${S}/advanced/Scripts/database_migration ${D}${sysconfdir}/pihole
+    cp -r ${S}/advanced/Templates/gravity*.sql ${D}${sysconfdir}/pihole/Templates
+
+    sed -i "s?/etc/.pihole/advanced/Scripts?/etc/pihole?" ${D}${PI_HOLE_INSTALL_DIR}/gravity.sh
+    sed -i "s?piholeGitDir=\"/etc/.pihole\"??" ${D}${PI_HOLE_INSTALL_DIR}/gravity.sh
+    # pick up two instances of string with g option
+    sed -i "s?\${piholeGitDir}/advanced/Templates?/etc/pihole/Templates?g"  ${D}${PI_HOLE_INSTALL_DIR}/gravity.sh
+
     # create revisions file
     echo "\
 CORE_VERSION=${BB_CORE_VERSION} 
@@ -97,7 +124,9 @@ GITHUB_FTL_HASH=${BB_FTL_HASH}
 
 
 FILES:${PN} += " \
+    /home/admin \
     /etc/pihole \
     ${PI_HOLE_INSTALL_DIR} \
+    ${PI_HOLE_CONFIG_DIR} \
     ${PI_HOLE_BIN_DIR} \
 "

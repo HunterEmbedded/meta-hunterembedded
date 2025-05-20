@@ -1533,7 +1533,7 @@ installCron() {
     printf "\\n  %b %s..." "${INFO}" "${str}"
     # Copy the cron file over from the local repo
     # File must not be world or group writeable and must be owned by root
-    install -D -m 644 -T -o root -g root ${PI_HOLE_LOCAL_REPO}/advanced/Templates/pihole.cron /etc/cron.d/pihole
+    # install -D -m 644 -T -o root -g root ${PI_HOLE_LOCAL_REPO}/advanced/Templates/pihole.cron /etc/cron.d/pihole
     # Randomize gravity update time
     sed -i "s/59 1 /$((1 + RANDOM % 58)) $((3 + RANDOM % 2))/" /etc/cron.d/pihole
     # Randomize update checker time
@@ -1688,10 +1688,10 @@ installPihole() {
     remove_old_pihole_lighttpd_configs
 
     # Install config files
-    if ! installConfigs; then
-        printf "  %b Failure in dependent config copy function.\\n" "${CROSS}"
-        exit 1
-    fi
+    #if ! installConfigs; then
+    #    printf "  %b Failure in dependent config copy function.\\n" "${CROSS}"
+    #    exit 1
+    #fi
 
     # Install the cron file
     installCron
@@ -2344,16 +2344,17 @@ main() {
     fi
 
     # in case of an update (can be a v5 -> v6 or v6 -> v6 update) or repair
-    if [[ -f "${PI_HOLE_V6_CONFIG}" ]] || [[ -f "/etc/pihole/setupVars.conf" ]]; then
-        # retain settings
-        fresh_install=false
-        # if it's running unattended,
-        if [[ "${runUnattended}" == true ]]; then
-            printf "  %b Performing unattended setup, no dialogs will be displayed\\n" "${INFO}"
-            # also disable debconf-apt-progress dialogs
-            export DEBIAN_FRONTEND="noninteractive"
-        fi
-    fi
+    # from yocto/rauc it is always a fresh install if this script is running
+    #if [[ -f "${PI_HOLE_V6_CONFIG}" ]] || [[ -f "/etc/pihole/setupVars.conf" ]]; then
+    #    # retain settings
+    #    fresh_install=false
+    #    # if it's running unattended,
+    #    if [[ "${runUnattended}" == true ]]; then
+    #        printf "  %b Performing unattended setup, no dialogs will be displayed\\n" "${INFO}"
+    #        # also disable debconf-apt-progress dialogs
+    #        export DEBIAN_FRONTEND="noninteractive"
+    #    fi
+    #fi
 
     if [[ "${fresh_install}" == true ]]; then
         # Display welcome dialogs
@@ -2430,11 +2431,8 @@ main() {
     # Ensure the service is enabled before trying to start it
     # Fixes a problem reported on Ubuntu 18.04 where trying to start
     # the service before enabling causes installer to exit
-    enable_service pihole-FTL
-
-    restart_service pihole-FTL
-
-    echo "fresh_install 1 ${fresh_install}"
+    # enable_service pihole-FTL
+    #restart_service pihole-FTL
 
     if [[ "${fresh_install}" == true ]]; then
         # apply settings to pihole.toml
@@ -2456,16 +2454,13 @@ main() {
             setFTLConfigValue "misc.privacylevel" "${PRIVACY_LEVEL}"
         fi
     fi
-
-    echo "runGravity"
+ 
     # Download and compile the aggregated block list
     runGravity
 
-    echo "updatecheck.sh"
     # Update local and remote versions via updatechecker
     #/opt/pihole/updatecheck.sh
 
-    echo "fresh_install 2 ${fresh_install}"
     if [[ "${fresh_install}" == true ]]; then
 
         # Get the Web interface port, return only the first port and strip all non-numeric characters
