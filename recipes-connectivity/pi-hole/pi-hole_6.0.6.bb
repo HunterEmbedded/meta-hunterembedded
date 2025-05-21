@@ -33,6 +33,7 @@ RDEPENDS:${PN} = " \
 
 SRC_URI = "  gitsm://github.com/pi-hole/pi-hole.git;protocol=https;branch=master"
 SRC_URI:append = " file://basic-install.sh"
+SRC_URI:append = " file://pihole-default-${PV}.toml"
 
 
 SRCREV = "${CORE_SRCREV}"
@@ -120,6 +121,11 @@ GITHUB_FTL_VERSION=${BB_FTL_VERSION}
 GITHUB_FTL_HASH=${BB_FTL_HASH}
 " > ${D}/etc/pihole/versions
 
+
+    # install a pre-configured pihole.toml with all the default settings for DNS etc already set. This avoids all
+    # the dialog boxes being shown. UI password set to "piholeUI" using "pihole setpassword piholeUI" on target to 
+    # create value in pihole.toml
+    install -o pihole -Dm644 ${WORKDIR}/pihole-default-${PV}.toml  ${D}${PI_HOLE_CONFIG_DIR}/pihole.toml
 }
 
 

@@ -2356,29 +2356,29 @@ main() {
     #    fi
     #fi
 
-    if [[ "${fresh_install}" == true ]]; then
+    #if [[ "${fresh_install}" == true ]]; then
         # Display welcome dialogs
-        welcomeDialogs
+    #    welcomeDialogs
         # Create directory for Pi-hole storage (/etc/pihole/)
-        install -d -m 755 "${PI_HOLE_CONFIG_DIR}"
+    #    install -d -m 755 "${PI_HOLE_CONFIG_DIR}"
         # Determine available interfaces
-        get_available_interfaces
+    #    get_available_interfaces
         # Find interfaces and let the user choose one
-        chooseInterface
+    #    chooseInterface
         # find IPv4 and IPv6 information of the device
-        collect_v4andv6_information
+    #    collect_v4andv6_information
         # Decide what upstream DNS Servers to use
-        setDNS
+    #    setDNS
         # Give the user a choice of blocklists to include in their install. Or not.
-        chooseBlocklists
+    #    chooseBlocklists
         # Let the user decide if they want query logging enabled...
-        setLogging
+    #    setLogging
         # Let the user decide the FTL privacy level
-        setPrivacyLevel
-    else
+    #    setPrivacyLevel
+    #else
         # Setup adlist file if not exists
         installDefaultBlocklists
-    fi
+    #fi
     # Download or reset the appropriate git repos depending on the 'repair' flag
     #clone_or_reset_repos
 
@@ -2394,6 +2394,7 @@ main() {
     #    printf "  %b FTL Engine not installed\\n" "${CROSS}"
     #    exit 1
     #fi
+
 
     # Install and log everything to a file
     installPihole | tee -a /proc/$$/fd/3
@@ -2418,7 +2419,7 @@ main() {
     # so this change needs to be made after installation is complete,
     # but before starting or resttarting the ftl service
     disable_resolved_stublistener
-
+ 
     # Check if gravity database needs to be upgraded. If so, do it without rebuilding
     # gravity altogether. This may be a very long running task needlessly blocking
     # the update process.
@@ -2432,28 +2433,28 @@ main() {
     # Fixes a problem reported on Ubuntu 18.04 where trying to start
     # the service before enabling causes installer to exit
     # enable_service pihole-FTL
-    #restart_service pihole-FTL
+    restart_service pihole-FTL
 
-    if [[ "${fresh_install}" == true ]]; then
+    #if [[ "${fresh_install}" == true ]]; then
         # apply settings to pihole.toml
         # needs to be done after FTL service has been started, otherwise pihole.toml does not exist
         # set on fresh installations by setDNS() and setPrivacyLevel() and setLogging()
 
         # Upstreams may be needed in order to run gravity.sh
-        if [ -n "${PIHOLE_DNS_1}" ]; then
-            local string="\"${PIHOLE_DNS_1}\""
-            [ -n "${PIHOLE_DNS_2}" ] && string+=", \"${PIHOLE_DNS_2}\""
-            setFTLConfigValue "dns.upstreams" "[ $string ]"
-        fi
+    #    if [ -n "${PIHOLE_DNS_1}" ]; then
+    #        local string="\"${PIHOLE_DNS_1}\""
+    #        [ -n "${PIHOLE_DNS_2}" ] && string+=", \"${PIHOLE_DNS_2}\""
+    #        setFTLConfigValue "dns.upstreams" "[ $string ]"
+    #    fi
 
-        if [ -n "${QUERY_LOGGING}" ]; then
-            setFTLConfigValue "dns.queryLogging" "${QUERY_LOGGING}"
-        fi
+    #    if [ -n "${QUERY_LOGGING}" ]; then
+    #        setFTLConfigValue "dns.queryLogging" "${QUERY_LOGGING}"
+    #    fi
 
-        if [ -n "${PRIVACY_LEVEL}" ]; then
-            setFTLConfigValue "misc.privacylevel" "${PRIVACY_LEVEL}"
-        fi
-    fi
+    #    if [ -n "${PRIVACY_LEVEL}" ]; then
+    #        setFTLConfigValue "misc.privacylevel" "${PRIVACY_LEVEL}"
+    #    fi
+    #fi
  
     # Download and compile the aggregated block list
     runGravity
@@ -2461,39 +2462,39 @@ main() {
     # Update local and remote versions via updatechecker
     #/opt/pihole/updatecheck.sh
 
-    if [[ "${fresh_install}" == true ]]; then
+    #if [[ "${fresh_install}" == true ]]; then
 
         # Get the Web interface port, return only the first port and strip all non-numeric characters
-        WEBPORT=$(getFTLConfigValue webserver.port|cut -d, -f1 | tr -cd '0-9')
+    #    WEBPORT=$(getFTLConfigValue webserver.port|cut -d, -f1 | tr -cd '0-9')
 
         # If this is a fresh install, we will set a random password.
         # Users can change this password after installation if they wish
-        pw=$(tr -dc _A-Z-a-z-0-9 </dev/urandom | head -c 8)
-        pihole setpassword "${pw}" > /dev/null
+    #    pw=$(tr -dc _A-Z-a-z-0-9 </dev/urandom | head -c 8)
+    #    pihole setpassword "${pw}" > /dev/null
 
         # Explain to the user how to use Pi-hole as their DNS server
-        printf "\\n  %b You may now configure your devices to use the Pi-hole as their DNS server\\n" "${INFO}"
-        [[ -n "${IPV4_ADDRESS%/*}" ]] && printf "  %b Pi-hole DNS (IPv4): %s\\n" "${INFO}" "${IPV4_ADDRESS%/*}"
-        [[ -n "${IPV6_ADDRESS}" ]] && printf "  %b Pi-hole DNS (IPv6): %s\\n" "${INFO}" "${IPV6_ADDRESS}"
-        printf "  %b If you have not done so already, the above IP should be set to static.\\n" "${INFO}"
+    #    printf "\\n  %b You may now configure your devices to use the Pi-hole as their DNS server\\n" "${INFO}"
+    #    [[ -n "${IPV4_ADDRESS%/*}" ]] && printf "  %b Pi-hole DNS (IPv4): %s\\n" "${INFO}" "${IPV4_ADDRESS%/*}"
+    #    [[ -n "${IPV6_ADDRESS}" ]] && printf "  %b Pi-hole DNS (IPv6): %s\\n" "${INFO}" "${IPV6_ADDRESS}"
+    #    printf "  %b If you have not done so already, the above IP should be set to static.\\n" "${INFO}"
 
-        printf "  %b View the web interface at http://pi.hole:${WEBPORT}/admin or http://%s/admin\\n\\n" "${INFO}" "${IPV4_ADDRESS%/*}:${WEBPORT}"
-        printf "  %b Web Interface password: %b%s%b\\n" "${INFO}" "${COL_LIGHT_GREEN}" "${pw}" "${COL_NC}"
-        printf "  %b This can be changed using 'pihole setpassword'\\n\\n" "${INFO}"
+    #    printf "  %b View the web interface at http://pi.hole:${WEBPORT}/admin or http://%s/admin\\n\\n" "${INFO}" "${IPV4_ADDRESS%/*}:${WEBPORT}"
+    #    printf "  %b Web Interface password: %b%s%b\\n" "${INFO}" "${COL_LIGHT_GREEN}" "${pw}" "${COL_NC}"
+    #    printf "  %b This can be changed using 'pihole setpassword'\\n\\n" "${INFO}"
 
         # Final dialog message to the user
-        dialog --no-shadow --keep-tite \
-            --title "Installation Complete!" \
-            --msgbox "Configure your devices to use the Pi-hole as their DNS server using:\
-\\n\\nIPv4:	${IPV4_ADDRESS%/*}\
-\\nIPv6:	${IPV6_ADDRESS:-"Not Configured"}\
-\\nIf you have not done so already, the above IP should be set to static.\
-\\nView the web interface at http://pi.hole/admin:${WEBPORT} or http://${IPV4_ADDRESS%/*}:${WEBPORT}/admin\\n\\nYour Admin Webpage login password is ${pw}" "${r}" "${c}"
+    #    dialog --no-shadow --keep-tite \
+    #        --title "Installation Complete!" \
+    #        --msgbox "Configure your devices to use the Pi-hole as their DNS server using:\
+#\\n\\nIPv4:	${IPV4_ADDRESS%/*}\
+#\\nIPv6:	${IPV6_ADDRESS:-"Not Configured"}\
+#\\nIf you have not done so already, the above IP should be set to static.\
+#\\nView the web interface at http://pi.hole/admin:${WEBPORT} or http://${IPV4_ADDRESS%/*}:${WEBPORT}/admin\\n\\nYour Admin Webpage login password is ${pw}" "${r}" "${c}"
 
-        INSTALL_TYPE="Installation"
-    else
-        INSTALL_TYPE="Update"
-    fi
+#        INSTALL_TYPE="Installation"
+#    else
+#        INSTALL_TYPE="Update"
+#    fi
 
     # Display where the log file is
     printf "\\n  %b The install log is located at: %s\\n" "${INFO}" "${installLogLoc}"

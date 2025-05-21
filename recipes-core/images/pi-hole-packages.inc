@@ -3,9 +3,7 @@ IMAGE_INSTALL:append = " \
         binutils \
         coreutils \
         curl \
-        dialog \
         bind-utils \
-        git \
         glibc-utils \
         nano \
         ncurses \
