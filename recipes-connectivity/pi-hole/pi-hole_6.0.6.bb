@@ -33,6 +33,7 @@ RDEPENDS:${PN} = " \
 
 SRC_URI = "  gitsm://github.com/pi-hole/pi-hole.git;protocol=https;branch=master"
 SRC_URI:append = " file://basic-install.sh"
+SRC_URI:append = " file://move-pihole-config-to-data.sh"
 SRC_URI:append = " file://pihole-default-${PV}.toml"
 
 
@@ -55,6 +56,7 @@ do_install(){
 
     # overwrite default script with customised no check and no download version
     install -m 755 ${WORKDIR}/basic-install.sh ${D}/home/admin
+    install -m 755 ${WORKDIR}/move-pihole-config-to-data.sh ${D}/home/admin
 
     # create directories
     install -d ${D}${sysconfdir}/pihole
