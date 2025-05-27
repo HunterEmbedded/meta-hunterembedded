@@ -1535,9 +1535,9 @@ installCron() {
     # File must not be world or group writeable and must be owned by root
     # install -D -m 644 -T -o root -g root ${PI_HOLE_LOCAL_REPO}/advanced/Templates/pihole.cron /etc/cron.d/pihole
     # Randomize gravity update time
-    sed -i "s/59 1 /$((1 + RANDOM % 58)) $((3 + RANDOM % 2))/" /etc/cron.d/pihole
+    sed --follow-symlinks -i "s/59 1 /$((1 + RANDOM % 58)) $((3 + RANDOM % 2))/" /etc/cron.d/pihole
     # Randomize update checker time
-    sed -i "s/59 17/$((1 + RANDOM % 58)) $((12 + RANDOM % 8))/" /etc/cron.d/pihole
+    sed --follow-symlinks -i "s/59 17/$((1 + RANDOM % 58)) $((12 + RANDOM % 8))/" /etc/cron.d/pihole
     printf "%b  %b %s\\n" "${OVER}" "${TICK}" "${str}"
 }
 
