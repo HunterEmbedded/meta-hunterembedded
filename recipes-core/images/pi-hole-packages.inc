@@ -13,4 +13,5 @@ IMAGE_INSTALL:append = " \
         mbedtls \
         iproute2-ss \
         pi-hole \
+        sed \
 "
