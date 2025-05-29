@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# script to be run which will configure pihole for RAUC A/B with shared data if required
+
+# if /data/etc/pihole does not exist then it is first boot from a WIC file so configure system
+if [ ! -d /data/etc/pihole ]
+then
+    ./move-pihole-config-to-data.sh
+    ./basic-install.sh     
+
+    # for some unknown (as yet) reason need to manually force pihole to understand that it has downloaded gravity db
+    pihole -g
+fi
+

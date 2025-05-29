@@ -1,0 +1,13 @@
+[Unit]
+Description=Start Pi-Hole service
+
+Wants=pi-hole.service
+After=pi-hole.service
+
+
+[Service]
+WorkingDirectory=/home/admin
+ExecStart=/home/admin/start-pihole.sh
+
+[Install]
+WantedBy=multi-user.target 

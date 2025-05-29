@@ -32,9 +32,13 @@ RDEPENDS:${PN} = " \
 "
 
 SRC_URI = "  gitsm://github.com/pi-hole/pi-hole.git;protocol=https;branch=master"
-SRC_URI:append = " file://basic-install.sh"
-SRC_URI:append = " file://move-pihole-config-to-data.sh"
-SRC_URI:append = " file://pihole-default-${PV}.toml"
+SRC_URI:append = " file://basic-install.sh \
+                   file://move-pihole-config-to-data.sh \
+                   file://pihole-default-${PV}.toml\ 
+                   file://start-pihole.sh \
+                   file://pi-hole.service \
+                   file://pihole-FTL.service \
+                  "
 
 
 SRCREV = "${CORE_SRCREV}"
@@ -44,22 +48,27 @@ S = "${WORKDIR}/git"
 PI_HOLE_INSTALL_DIR = "/opt/pihole"
 PI_HOLE_CONFIG_DIR = "${sysconfdir}/pihole"
 PI_HOLE_BIN_DIR = "/usr/local/bin"
-inherit useradd
+
+inherit useradd systemd
+
 USERADD_PACKAGES = "${PN}"
 USERADD_PARAM:${PN} = "--system pihole"
+
+SYSTEMD_SERVICE:${PN} = "pi-hole.service"
+#SYSTEMD_AUTO_ENABLE:${PN} = "disable"
 
 do_install(){
 
     # copy over pihole repo
     install -d ${D}/home/admin
-    #cp -r ${S}/. ${D}/etc/.pihole
 
     # overwrite default script with customised no check and no download version
     install -m 755 ${WORKDIR}/basic-install.sh ${D}/home/admin
     install -m 755 ${WORKDIR}/move-pihole-config-to-data.sh ${D}/home/admin
+    install -m 755 ${WORKDIR}/start-pihole.sh ${D}/home/admin
 
     # create directories
-    install -d ${D}${sysconfdir}/pihole
+    install -o pihole -d ${D}${sysconfdir}/pihole
     install -d ${D}${sysconfdir}/pihole/Templates
     install -d ${D}${sysconfdir}/cron.d
     install -d ${D}${sysconfdir}/systemd/system/multi-user.target.wants
@@ -85,6 +94,7 @@ do_install(){
     # install pihole-FTL.service and then manually enable it with symlink as we cannot do it in the pihole-FTL recipe 
     # as it does not have the pihole git repo with the service file
     install -Dm644 ${S}/advanced/Templates/pihole-FTL.systemd ${D}${sysconfdir}/systemd/system/pihole-FTL.service
+    #install -Dm644 ${WORKDIR}/pihole-FTL.service ${D}${sysconfdir}/systemd/system/pihole-FTL.service
     ln -s -r ${D}${sysconfdir}/systemd/system/pihole-FTL.service ${D}${sysconfdir}/systemd/system/multi-user.target.wants/pihole-FTL.service 
     install -Dm755 ${S}/advanced/Templates/pihole-FTL-prestart.sh ${D}${PI_HOLE_INSTALL_DIR}/pihole-FTL-prestart.sh
     install -Dm755 ${S}/advanced/Templates/pihole-FTL-poststop.sh ${D}${PI_HOLE_INSTALL_DIR}/pihole-FTL-poststop.sh
@@ -128,6 +138,12 @@ GITHUB_FTL_HASH=${BB_FTL_HASH}
     # the dialog boxes being shown. UI password set to "piholeUI" using "pihole setpassword piholeUI" on target to 
     # create value in pihole.toml
     install -o pihole -Dm644 ${WORKDIR}/pihole-default-${PV}.toml  ${D}${PI_HOLE_CONFIG_DIR}/pihole.toml
+
+
+    if [ "${@bb.utils.filter('DISTRO_FEATURES', 'systemd', d)}" ] ; then
+        install -d ${D}${systemd_system_unitdir}
+        install -m 0644 ${WORKDIR}/pi-hole.service ${D}${systemd_system_unitdir}/pi-hole.service
+    fi
 }
 
 
@@ -137,4 +153,5 @@ FILES:${PN} += " \
     ${PI_HOLE_INSTALL_DIR} \
     ${PI_HOLE_CONFIG_DIR} \
     ${PI_HOLE_BIN_DIR} \
+    ${systemd_system_unitdir} \
 "

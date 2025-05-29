@@ -1362,17 +1362,19 @@ stop_service() {
 # Start/Restart service passed in as argument
 restart_service() {
     # Local, named variables
-    local str="Restarting ${1} service"
+    local str="Iain Restarting ${1} service"
     printf "  %b %s..." "${INFO}" "${str}"
     # If systemctl exists,
     if is_command systemctl; then
         # use that to restart the service
+        printf "systemctl restart IAIN"
         systemctl -q restart "${1}"
+        printf "systemctl restart IAIN result $?"
     else
         # Otherwise, fall back to the service command
         service "${1}" restart >/dev/null
     fi
-    printf "%b  %b %s...\\n" "${OVER}" "${TICK}" "${str}"
+    printf "IAIN2 %b  %b %s...\\n" "${OVER}" "${TICK}" "${str}"
 }
 
 # Enable service so that it will start with next reboot
@@ -2418,7 +2420,8 @@ main() {
     # DNSStubListener needs to remain in place for installer to download needed files,
     # so this change needs to be made after installation is complete,
     # but before starting or resttarting the ftl service
-    disable_resolved_stublistener
+    # no disabled by override file installed already
+    #disable_resolved_stublistener
  
     # Check if gravity database needs to be upgraded. If so, do it without rebuilding
     # gravity altogether. This may be a very long running task needlessly blocking
@@ -2433,7 +2436,9 @@ main() {
     # Fixes a problem reported on Ubuntu 18.04 where trying to start
     # the service before enabling causes installer to exit
     # enable_service pihole-FTL
-    restart_service pihole-FTL
+    
+    # Cannot run a systemctl call from within another systemd service, so start pihole-FTL AFTER pihole 
+    #restart_service pihole-FTL
 
     #if [[ "${fresh_install}" == true ]]; then
         # apply settings to pihole.toml
