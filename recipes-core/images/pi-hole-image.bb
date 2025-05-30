@@ -12,7 +12,7 @@ IMAGE_INSTALL:append = " sudo"
 # This password is generated with `openssl passwd -6 pihole` with the $ character escaped
 PASSWD = "\$6\$K4WZJ7vtv0TmkelK\$s05QnWh6Z4G43PP/Eb4K4fmQKwlNuEyyvYOS7CQsQIAq6zSWQ9XjBdHPnN48r/zaJvRRphflWwJVLBrQTkwSv/"
 EXTRA_USERS_PARAMS = "\
-    useradd  -d /home/admin --groups sudo --shell /bin/sh --password '\$6\$K4WZJ7vtv0TmkelK\$s05QnWh6Z4G43PP/Eb4K4fmQKwlNuEyyvYOS7CQsQIAq6zSWQ9XjBdHPnN48r/zaJvRRphflWwJVLBrQTkwSv/' admin; \
+    useradd  -d /home/admin --groups sudo --shell /bin/bash --password '\$6\$K4WZJ7vtv0TmkelK\$s05QnWh6Z4G43PP/Eb4K4fmQKwlNuEyyvYOS7CQsQIAq6zSWQ9XjBdHPnN48r/zaJvRRphflWwJVLBrQTkwSv/' admin; \
 "
 
 # Store the kernel in the rootfs partition
