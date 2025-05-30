@@ -1,13 +1,14 @@
 [Unit]
 Description=Start Pi-Hole service
 
-Wants=pi-hole.service
-After=pi-hole.service
+Wants=pihole-FTL.service
+After=pihole-FTL.service
 
 
 [Service]
+Type=oneshot
 WorkingDirectory=/home/admin
-ExecStart=/home/admin/start-pihole.sh
+ExecStart=/opt/pihole/start-pihole.sh
 
 [Install]
 WantedBy=multi-user.target 

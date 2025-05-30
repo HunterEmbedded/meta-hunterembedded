@@ -55,17 +55,15 @@ USERADD_PACKAGES = "${PN}"
 USERADD_PARAM:${PN} = "--system pihole"
 
 SYSTEMD_SERVICE:${PN} = "pi-hole.service"
-#SYSTEMD_AUTO_ENABLE:${PN} = "disable"
 
 do_install(){
 
-    # copy over pihole repo
-    install -d ${D}/home/admin
-
-    # overwrite default script with customised no check and no download version
-    install -m 755 ${WORKDIR}/basic-install.sh ${D}/home/admin
-    install -m 755 ${WORKDIR}/move-pihole-config-to-data.sh ${D}/home/admin
-    install -m 755 ${WORKDIR}/start-pihole.sh ${D}/home/admin
+    # overwrite default basic-install script with customised no check and no download version
+    # as well as the supporting scripts to be run by the service
+    install -d ${D}/opt/pihole
+    install -m 755 ${WORKDIR}/basic-install.sh ${D}/opt/pihole
+    install -m 755 ${WORKDIR}/move-pihole-config-to-data.sh ${D}/opt/pihole
+    install -m 755 ${WORKDIR}/start-pihole.sh ${D}/opt/pihole
 
     # create directories
     install -o pihole -d ${D}${sysconfdir}/pihole
@@ -148,7 +146,7 @@ GITHUB_FTL_HASH=${BB_FTL_HASH}
 
 
 FILES:${PN} += " \
-    /home/admin \
+    /opt/pihole \
     /etc/pihole \
     ${PI_HOLE_INSTALL_DIR} \
     ${PI_HOLE_CONFIG_DIR} \
