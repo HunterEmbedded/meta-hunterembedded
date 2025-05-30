@@ -1367,14 +1367,14 @@ restart_service() {
     # If systemctl exists,
     if is_command systemctl; then
         # use that to restart the service
-        printf "systemctl restart IAIN"
+        printf "systemctl restart"
         systemctl -q restart "${1}"
-        printf "systemctl restart IAIN result $?"
+        printf "systemctl restart result $?"
     else
         # Otherwise, fall back to the service command
         service "${1}" restart >/dev/null
     fi
-    printf "IAIN2 %b  %b %s...\\n" "${OVER}" "${TICK}" "${str}"
+    printf " %b  %b %s...\\n" "${OVER}" "${TICK}" "${str}"
 }
 
 # Enable service so that it will start with next reboot
