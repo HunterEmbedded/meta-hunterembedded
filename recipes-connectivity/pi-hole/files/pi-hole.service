@@ -1,8 +1,8 @@
 [Unit]
 Description=Start Pi-Hole service
 
-Wants=pihole-FTL.service
-After=pihole-FTL.service
+Wants=pihole-FTL.service time-sync.target
+After=pihole-FTL.service time-sync.target
 
 
 [Service]
