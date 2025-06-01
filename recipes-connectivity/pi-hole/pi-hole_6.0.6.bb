@@ -33,7 +33,9 @@ RDEPENDS:${PN} = " \
 
 SRC_URI = "  gitsm://github.com/pi-hole/pi-hole.git;protocol=https;branch=master"
 SRC_URI:append = " file://basic-install.sh \
+                   file://file-dirs-to-migrate.sh \
                    file://move-pihole-config-to-data.sh \
+                   file://use-pihole-config-from-data.sh \
                    file://pihole-default-${PV}.toml\ 
                    file://start-pihole.sh \
                    file://pi-hole.service \
@@ -62,7 +64,9 @@ do_install(){
     # as well as the supporting scripts to be run by the service
     install -d ${D}/opt/pihole
     install -m 755 ${WORKDIR}/basic-install.sh ${D}/opt/pihole
+    install -m 755 ${WORKDIR}/file-dirs-to-migrate.sh ${D}/opt/pihole
     install -m 755 ${WORKDIR}/move-pihole-config-to-data.sh ${D}/opt/pihole
+    install -m 755 ${WORKDIR}/use-pihole-config-from-data.sh ${D}/opt/pihole
     install -m 755 ${WORKDIR}/start-pihole.sh ${D}/opt/pihole
 
     # create directories

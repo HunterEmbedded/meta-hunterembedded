@@ -2,10 +2,7 @@
 # script to be run on first boot on a clean image to move list of files in /etc that change 
 # when pihole is installed from rootfs /etc to a symlink on /data 
 
-listOfFilesDirsToMove="/etc/cron.d/pihole /etc/ld.so.cache /etc/machine-id /etc/pihole /etc/ssh /etc/hosts/custom.list"
-listOfDirsToCreate="/etc/dnsmasq.d /etc/systemd/resolved.conf.d"
-
-dataDir="/data"
+source /opt/pihole/file-dirs-to-migrate.sh
 
 moveToData () {
     # file is arg 1, it may be a path to a file or a directory in this function
