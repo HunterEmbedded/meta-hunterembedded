@@ -5,4 +5,8 @@ devpts               /dev/pts             devpts     mode=0620,ptmxmode=0666,gid
 tmpfs                /run                 tmpfs      mode=0755,nodev,nosuid,strictatime 0  0
 tmpfs                /var/volatile        tmpfs      defaults              0  0
 
-# /dev/mmcblk0pX partitions will be added by image_wic step
+# extra partitions mounted for RAUC
+# /u-boot contains uboot.env that RAUC needs to access and must be FAT for uboot to access
+/dev/mmcblk0p1	/u-boot	vfat	defaults	0	0
+# /data contains the RAUC status information and persistent /etc files
+/dev/mmcblk0p4	/data	ext4	defaults	0	0

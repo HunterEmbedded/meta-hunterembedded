@@ -20,3 +20,5 @@ IMAGE_INSTALL:append = " kernel-image kernel-modules"
 
 # Remove the kernel from the /boot partition because it is in rootfs
 RPI_EXTRA_IMAGE_BOOT_FILES:remove = "${KERNEL_IMAGETYPE}"
+# and add uboot.env to /boot so it persists between A/B boots
+#RPI_EXTRA_IMAGE_BOOT_FILES:append = " u-boot-initial-env"
