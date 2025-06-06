@@ -14,15 +14,15 @@ linkFileToData () {
     path="${file:0:${#file} - ${#name}}"
 
 
-    # if file exists then move it to /data and create symlink to the /data version
+    # if file exists but is not a symlink then remove it and create symlink to the /data version
     if [ -f "$file" ] ; then
-        mv $file $dataDir$file  || exit
+        rm $1 || exit
         ln -s  $dataDir$file $file || exit
     fi
 
-    # if dir exists but is not a symlink then copy it to /data and create symlink to the /data version
-    if [ -d "$file" ] && [ ! -L "$file" ]; then
-        mv $file $dataDir$file
+    # if dir exists but is not a symlink then remove it and create symlink to the /data version
+    if [ -d "$file" ] ; then
+        rm $file || exit
         ln -s $dataDir$file $file || exit
     fi
 }
