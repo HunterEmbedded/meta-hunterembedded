@@ -9,5 +9,9 @@ then
 
     # for some unknown (as yet) reason need to manually force pihole to understand that it has downloaded gravity db
     pihole -g
+# else if it does exits but /etc/pihole is not a symlink then it is first boot of RAUC image and so symlinks need created
+elif [ ! -L /etc/pihole ]
+then
+    /opt/pihole/use-pihole-config-from-data.sh
 fi
 
