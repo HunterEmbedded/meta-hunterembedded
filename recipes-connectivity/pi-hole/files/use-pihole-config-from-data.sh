@@ -22,7 +22,7 @@ linkFileToData () {
 
     # if dir exists but is not a symlink then remove it and create symlink to the /data version
     if [ -d "$file" ] ; then
-        rm $file || exit
+        rm -r $file
         ln -s $dataDir$file $file || exit
     fi
 }
@@ -32,7 +32,6 @@ linkToDirInData () {
     dir="$1"
     echo "dir $dir"
 
-    rmdir $dir || exit
     ln -s $dataDir$dir $dir || exit
 }
 

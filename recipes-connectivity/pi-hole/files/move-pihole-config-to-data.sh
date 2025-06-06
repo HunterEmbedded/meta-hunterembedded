@@ -24,7 +24,7 @@ moveToData () {
 
     # if dir exists but is not a symlink then move it and create symlink
     if [ -d "$file" ] ; then
-         mv $file $dataDir$file || exit
+        mv $file $dataDir$file || exit
         ln -s $dataDir$file $file || exit
     fi
 }
