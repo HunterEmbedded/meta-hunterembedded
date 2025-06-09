@@ -17,7 +17,6 @@ DEPENDS = " \
 
 SRC_URI = " \
     gitsm://github.com/pi-hole/ftl.git;protocol=https;branch=master \
-    file://0001-correct-type-for-tx-offset-printf.patch \
     file://90-pi-hole-disable-stub-listener.conf \
 "
 SRCREV = "${FTL_SRCREV}"
