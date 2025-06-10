@@ -14,5 +14,4 @@ IMAGE_INSTALL:append = " \
         iproute2-ss \
         pi-hole \
         sed \
-        systemd-analyze \
 "
