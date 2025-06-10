@@ -3,9 +3,12 @@ require recipes-core/images/core-image-minimal.bb
 DESCRIPTION = "Optimized image for Pi-Hole"
 
 require pi-hole-packages.inc
-
+require pi-hole-image-version.inc
 
 inherit extrausers
+
+# Add pihole version to image name
+IMAGE_BASENAME:append = "-${IMAGE_PIHOLE_VERSION}"
 
 IMAGE_INSTALL:append = " sudo"
 

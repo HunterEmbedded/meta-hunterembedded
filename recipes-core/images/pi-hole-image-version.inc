@@ -1,0 +1,2 @@
+IMAGE_PIHOLE_VERSION = "6.0.6"
+
