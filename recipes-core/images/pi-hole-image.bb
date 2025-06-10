@@ -22,3 +22,12 @@ IMAGE_INSTALL:append = " kernel-image kernel-modules"
 RPI_EXTRA_IMAGE_BOOT_FILES:remove = "${KERNEL_IMAGETYPE}"
 # and add uboot.env to /boot so it persists between A/B boots
 #RPI_EXTRA_IMAGE_BOOT_FILES:append = " u-boot-initial-env"
+
+# add a new CONVERSION operation to copy the .wic.bz2 file to a .img file to be friendly to 
+# Raspberry Pi Imager which expects a .img
+# CONVERSION operation is automatically appended to do_image_wic()
+CONVERSIONTYPES:append = " img"
+IMAGE_FSTYPES:append = " wic.bz2.img"
+# use dd and its conv=sync option to pad the img file to a multiple of sector size to keep Imager happy
+CONVERSION_CMD:img = "dd if=${IMAGE_NAME}.wic.bz2 of=${IMAGE_NAME}.img conv=sync"
+
