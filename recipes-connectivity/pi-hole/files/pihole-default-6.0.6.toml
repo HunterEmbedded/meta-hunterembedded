@@ -812,7 +812,7 @@
     #
     # Possible values are:
     #     <valid Pi-hole password hash>
-    pwhash = "$BALLOON-SHA256$v=1$s=1024,t=32$Twbh9aopXKQmBlTdXtvbug==$R0BkzUzS/EudCLjiV6k9opUnEnK2jokPEZ1j/qr+g7E=" ### CHANGED, default = ""
+    pwhash = "$BALLOON-SHA256$v=1$s=1024,t=32$al5rZn4u1jVA1DEhQZDrhA==$+lnRLGpJdG7R7i1XDbt6IP/J0qEbPqeAy7kMoGsVQ2s=" ### CHANGED, default = ""
 
     # Pi-hole 2FA TOTP secret. When set to something different than "", 2FA authentication
     # will be enforced for the API and the web interface. This setting is write-only, you
