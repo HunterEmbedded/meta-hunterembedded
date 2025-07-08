@@ -141,6 +141,10 @@ GITHUB_FTL_HASH=${BB_FTL_HASH}
     # create value in pihole.toml
     install -o pihole -Dm644 ${WORKDIR}/pihole-default-${PV}.toml  ${D}${PI_HOLE_CONFIG_DIR}/pihole.toml
 
+    # remove updatechecker from cron job as it changes /etc/pihole/versions and thus UI dashboard
+    # we are on fixed versions and so do not want an automatic update check
+    sed -i "s/59 17/#59 17/" ${D}${sysconfdir}/cron.d/pihole
+    sed -i "s/@reboot root/#@reboot root/" ${D}${sysconfdir}/cron.d/pihole
 
     if [ "${@bb.utils.filter('DISTRO_FEATURES', 'systemd', d)}" ] ; then
         install -d ${D}${systemd_system_unitdir}
