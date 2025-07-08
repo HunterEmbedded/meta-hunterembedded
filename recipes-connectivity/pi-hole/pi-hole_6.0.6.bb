@@ -38,6 +38,8 @@ SRC_URI:append = " file://basic-install.sh \
                    file://use-pihole-config-from-data.sh \
                    file://pihole-default-${PV}.toml\ 
                    file://start-pihole.sh \
+                   file://update.sh \
+                   file://updatecheck.sh \
                    file://pi-hole.service \
                    file://pihole-FTL.service \
                   "
@@ -142,6 +144,10 @@ GITHUB_FTL_HASH=${BB_FTL_HASH}
     install -o pihole -Dm644 ${WORKDIR}/pihole-default-${PV}.toml  ${D}${PI_HOLE_CONFIG_DIR}/pihole.toml
 
     # remove updatechecker from cron job as it changes /etc/pihole/versions and thus UI dashboard
+    # Just implement update.sh/updatecheck.sh as empty scripts as we are not sure exactly where it is being called from at runtime at the moment.
+    install -o pihole -Dm755 ${WORKDIR}/update.sh ${D}${PI_HOLE_INSTALL_DIR}/
+    install -o pihole -Dm755 ${WORKDIR}/updatecheck.sh ${D}${PI_HOLE_INSTALL_DIR}/
+    
     # we are on fixed versions and so do not want an automatic update check
     sed -i "s/59 17/#59 17/" ${D}${sysconfdir}/cron.d/pihole
     sed -i "s/@reboot root/#@reboot root/" ${D}${sysconfdir}/cron.d/pihole
