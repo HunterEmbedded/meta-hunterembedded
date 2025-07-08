@@ -12,6 +12,7 @@ RDEPENDS:${PN} = " \
     cronie \
     curl \
     dialog  \
+    gawk \
     git \
     grep \
     iproute2 \
