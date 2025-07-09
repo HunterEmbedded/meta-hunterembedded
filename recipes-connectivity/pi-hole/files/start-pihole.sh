@@ -14,9 +14,14 @@ then
     mkdir /data/update
     chown admin:admin /data/update
 
-# else if it does exits but /etc/pihole is not a symlink then it is first boot of RAUC image and so symlinks need created
+# else if it does exist but /etc/pihole is not a symlink then it is first boot of RAUC image and so symlinks need created
 elif [ ! -L /etc/pihole ]
 then
+
+    # a special case is /etc/pihole/versions as we always want to update /data version from rootfs as it is tied to 
+    # rootfs contents rather than being a persistent file to be maintained 
+    mv /etc/pihole/versions /data/etc/pihole/versions
+
     /opt/pihole/use-pihole-config-from-data.sh
 fi
 
